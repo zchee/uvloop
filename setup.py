@@ -22,7 +22,21 @@ if vi[:2] == (3, 6):
         raise RuntimeError('uvloop requires Python 3.5 or 3.6b3 or greater')
 
 
-CFLAGS = ['-O2']
+CFLAGS = [
+    "-march=native",
+    "-Ofast",
+    "-funit-at-a-time",
+    "-fstrict-aliasing",
+    "-fvisibility=hidden",
+    "-fno-stack-protector",
+    "-fomit-frame-pointer",
+    "-fno-math-errno",
+    "-ffinite-math-only",
+    "-funsafe-math-optimizations",
+    "-fno-trapping-math",
+    "-ffast-math",
+    "-fasm-blocks",
+]
 LIBUV_DIR = os.path.join(os.path.dirname(__file__), 'vendor', 'libuv')
 LIBUV_BUILD_DIR = os.path.join(os.path.dirname(__file__), 'build', 'libuv')
 
@@ -131,7 +145,10 @@ class uvloop_build_ext(build_ext):
 
             from Cython.Build import cythonize
 
-            directives = {}
+            directives = {
+                'cdivision': True,
+                'iterable_coroutine': True
+            }
             if self.cython_directives:
                 for directive in self.cython_directives.split(','):
                     k, _, v = directive.partition('=')
